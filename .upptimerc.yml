@@ -76,6 +76,33 @@ commits:
 # Pas de notification e-mail/Slack pour l'instant : à brancher quand Tony
 # aura choisi son canal.
 
+# ══════════════════════════════════════════════════════════════
+# ⚠️ « Setup CI » et « Update Template CI » sont DÉSACTIVÉS — 2026-07-27
+#
+# Ces deux workflows réécrivent les fichiers .github/workflows/ pour
+# suivre les mises à jour du modèle Upptime. GitHub l'INTERDIT à un
+# robot d'Actions, par sécurité :
+#   « refusing to allow a GitHub App to create or update workflow
+#     response-time.yml without `workflows` permission »
+# Aucun réglage de dépôt ne lève ça : il faut un jeton personnel avec la
+# portée `workflow`, enregistré en secret sous le nom GH_PAT.
+#
+# Sans ce jeton, la SURVEILLANCE fonctionne parfaitement — Uptime CI,
+# Graphs CI, Summary CI, Response Time CI et Static Site CI lisent ce
+# fichier à l'exécution et n'ont besoin d'aucune permission spéciale.
+# Seule la mise à jour automatique du modèle est perdue. On les a donc
+# coupés plutôt que de laisser deux échecs par jour polluer la boîte
+# mail de Tony.
+#
+# Pour les réactiver un jour :
+#   1. github.com/settings/tokens → jeton classique, portées `repo`
+#      + `workflow`
+#   2. github.com/Shamash444/status/settings/secrets/actions →
+#      New secret, nom exact : GH_PAT
+#   3. gh workflow enable "Setup CI" -R Shamash444/status
+#      gh workflow enable "Update Template CI" -R Shamash444/status
+# ══════════════════════════════════════════════════════════════
+
 # ── Textes de la page, en français ────────────────────────────
 # ⚠️ Les noms de clés ne s'inventent pas : la liste qui fait foi est
 # https://github.com/upptime/status-page/blob/master/i18n.yml
