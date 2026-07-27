@@ -1,31 +1,102 @@
-# Change these first
-owner: upptime # Your GitHub organization or username, where this repository lives
-repo: upptime # The name of this repository
+# ══════════════════════════════════════════════════════════════
+# Page de statut publique de Kyneria
+# Propulsée par Upptime — 0 serveur, 0 €, tout tourne sur GitHub.
+# Le dépôt est PUBLIC : c'est ce qui rend les GitHub Actions illimitées.
+# Aucune clé, aucun secret ne doit apparaître dans ce fichier.
+# ══════════════════════════════════════════════════════════════
 
+owner: Shamash444
+repo: status
+
+# ── Ce qu'on surveille ────────────────────────────────────────
+# ⚠️ La protection anti-robots de Vercel répond 429 à tout client qui
+# n'est pas un vrai navigateur (vérifié le 2026-07-27 : www.kyneria.com,
+# /login.html, /pricing.html renvoient tous 429 à un curl). Sonder la
+# page d'accueil ferait donc clignoter « en panne » 24 h/24 alors que le
+# site va très bien.
+# On sonde les deux chemins déjà exemptés par les règles de contournement
+# Vercel (/robots.txt et /sitemap.xml) : ils sont servis par le MÊME
+# déploiement, donc un 200 prouve que le DNS, le CDN et le déploiement
+# sont vivants.
 sites:
-  - name: Google
-    url: https://www.google.com
-  - name: Wikipedia
-    url: https://en.wikipedia.org
-  - name: Hacker News
-    url: https://news.ycombinator.com
-  - name: Secret Site
-    url: $SECRET_SITE
+  - name: Site Kyneria
+    url: https://www.kyneria.com/robots.txt
 
+  - name: Plan du site (référencement)
+    url: https://www.kyneria.com/sitemap.xml
+
+  # Prouve que l'ancien domaine redirige toujours vers le nouveau.
+  # Upptime suit la redirection 308 : un 200 ici = la bascule tient.
+  - name: Redirection omniasynx.com
+    url: https://www.omniasynx.com/robots.txt
+
+  # Supabase répond 401 sans clé d'API : c'est la BONNE réponse d'un
+  # service en bonne santé. On attend donc 401, pas 200 — inutile
+  # d'exposer une clé dans un dépôt public pour obtenir un 200.
+  - name: Base de données
+    url: https://ixnaqeysrbrimquvvfqf.supabase.co/rest/v1/
+    expectedStatusCodes:
+      - 401
+
+  - name: Authentification
+    url: https://ixnaqeysrbrimquvvfqf.supabase.co/auth/v1/health
+    expectedStatusCodes:
+      - 401
+
+# ── La page publique ──────────────────────────────────────────
 status-website:
-  # Add your custom domain name, or remove the `cname` line if you don't have a domain
-  # Uncomment the `baseUrl` line if you don't have a custom domain and add your repo name there
-  cname: demo.upptime.js.org
-  # baseUrl: /your-repo-name
-  logoUrl: https://raw.githubusercontent.com/upptime/upptime.js.org/master/static/img/icon.svg
-  name: Upptime
-  introTitle: "**Upptime** is the open-source uptime monitor and status page, powered entirely by GitHub."
-  introMessage: This is a sample status page which uses **real-time** data from our [GitHub repository](https://github.com/upptime/upptime). No server required — just GitHub Actions, Issues, and Pages. [**Get your own for free**](https://github.com/upptime/upptime)
+  # Pas de domaine personnalisé pour l'instant : la page vivra sur
+  # https://shamash444.github.io/status. Pour passer à status.kyneria.com,
+  # il suffira de remplacer baseUrl par « cname: status.kyneria.com »
+  # et d'ajouter un CNAME chez Namecheap.
+  baseUrl: /status
+  name: Statut Kyneria
+  introTitle: "État des services **Kyneria**"
+  introMessage: >-
+    Cette page se met à jour toute seule, toutes les 5 minutes. Elle est
+    hébergée en dehors de notre infrastructure : si Kyneria tombe, cette
+    page, elle, reste debout.
   navbar:
-    - title: Status
+    - title: Statut
       href: /
-    - title: GitHub
-      href: https://github.com/$OWNER/$REPO
+    - title: Kyneria
+      href: https://www.kyneria.com
+  theme: dark
+  themeAuto: true
 
-# Upptime also supports notifications, assigning issues, and more
-# See https://upptime.js.org/docs/configuration
+# ── Réglages de surveillance ──────────────────────────────────
+# maxResponseTime : au-delà, le service est marqué « dégradé » plutôt
+# qu'« en panne » — utile pour voir venir un ralentissement.
+maxResponseTime: 8000
+
+commits:
+  message: ":robot: mise à jour du statut"
+
+# Les incidents sont ouverts et fermés automatiquement en Issues GitHub.
+# Pas de notification e-mail/Slack pour l'instant : à brancher quand Tony
+# aura choisi son canal.
+
+# ── Textes de la page, en français ────────────────────────────
+i18n:
+  activeIncidents: Incidents en cours
+  allSystemsOperational: Tous les services sont opérationnels
+  incidentReport: "Incident n°$NUMBER — signalé le"
+  incidentTitle: Incident
+  incidents: Incidents
+  liveStatus: État en direct
+  overallUptime: Disponibilité globale
+  pastIncidents: Incidents passés
+  responseTime: Temps de réponse
+  resolved: résolu
+  startedAt: commencé le
+  up: opérationnel
+  down: en panne
+  degraded: dégradé
+  upLabel: Opérationnel
+  downLabel: En panne
+  degradedLabel: Dégradé
+  noData: Pas encore de données
+  day: 24 heures
+  week: 7 jours
+  month: 30 jours
+  year: 1 an
