@@ -77,26 +77,90 @@ commits:
 # aura choisi son canal.
 
 # ── Textes de la page, en français ────────────────────────────
+# ⚠️ Les noms de clés ne s'inventent pas : la liste qui fait foi est
+# https://github.com/upptime/status-page/blob/master/i18n.yml
+# Une clé inexistante est ignorée en silence (le texte reste en anglais),
+# et une clé à qui il manque son marqueur $XXX affiche « undefined ».
 i18n:
-  activeIncidents: Incidents en cours
-  allSystemsOperational: Tous les services sont opérationnels
-  incidentReport: "Incident n°$NUMBER — signalé le"
-  incidentTitle: Incident
-  incidents: Incidents
+  locale: fr-FR
+
+  # État général
   liveStatus: État en direct
-  overallUptime: Disponibilité globale
+  allSystemsOperational: Tous les services sont opérationnels
+  overallUptime: "Disponibilité : $UPTIME"
+  overallUptimeTitle: Disponibilité globale
+  averageResponseTime: "Temps de réponse moyen : $TIME ms"
+  averageResponseTimeTitle: Temps de réponse moyen
+  sevelDayResponseTime: Temps de réponse sur 7 jours
+  responseTimeMs: Temps de réponse (ms)
+  up: Opérationnel
+  down: En panne
+  degraded: Dégradé
+  ms: ms
+  loading: Chargement…
+
+  # Périodes
+  duration24H: 24 h
+  duration7D: 7 j
+  duration30D: 30 j
+  duration1Y: 1 an
+  durationAll: tout
+
+  # Incidents
+  activeIncidents: Incidents en cours
+  activeIncidentSummary: Ouvert le $DATE — $POSTS message(s)
+  incidentReport: "Incident n° $NUMBER — voir le détail →"
+  incidentTitle: Détail de l'incident n° $NUMBER
+  incidentDetails: Détail de l'incident
+  incidentFixed: Résolu
+  incidentOngoing: En cours
+  incidentOpenedAt: Ouvert le
+  incidentClosedAt: Clos le
+  incidentViewOnGitHub: Voir et suivre sur GitHub
+  incidentCommentSummary: Publié le $DATE par $AUTHOR
+  incidentBack: ← Retour à tous les incidents
   pastIncidents: Incidents passés
-  responseTime: Temps de réponse
-  resolved: résolu
-  startedAt: commencé le
-  up: opérationnel
-  down: en panne
-  degraded: dégradé
-  upLabel: Opérationnel
-  downLabel: En panne
-  degradedLabel: Dégradé
-  noData: Pas encore de données
-  day: 24 heures
-  week: 7 jours
-  month: 30 jours
-  year: 1 an
+  pastIncidentsResolved: Résolu en $MINUTES minutes — $POSTS message(s)
+
+  # Maintenances planifiées
+  scheduledMaintenance: Maintenance planifiée
+  pastScheduledMaintenance: Maintenances passées
+  scheduledMaintenanceSummaryStarted: Commencée le $DATE, pour $DURATION minutes
+  scheduledMaintenanceSummaryStarts: Commence le $DATE, pour $DURATION minutes
+  startedAt: Commencé le
+  startsAt: Commence le
+  duration: Durée
+  durationMin: $DURATION minutes
+  incidentCompleted: Terminée
+  incidentScheduled: Planifiée
+
+  # Erreurs
+  errorTitle: Une erreur est survenue
+  errorIntro: Impossible de récupérer le dernier état des services.
+  errorText: Réessayez dans quelques instants.
+  errorHome: Retour à l'accueil
+
+  # Quota GitHub dépassé (le visiteur a rechargé la page trop souvent)
+  rateLimitExceededTitle: Trop de requêtes
+  rateLimitExceededIntro: >-
+    Vous avez dépassé le nombre de consultations autorisées en une heure.
+    Patientez un moment avant de revenir sur cette page.
+  rateLimitExceededWhatDoesErrorMean: Qu'est-ce que cela veut dire ?
+  rateLimitExceededErrorMeaning: >-
+    Cette page lit l'état de nos services en direct via l'interface de
+    GitHub, qui limite chaque visiteur à 60 consultations par heure.
+  rateLimitExceededErrorHowCanFix: Comment y remédier ?
+  rateLimitExceededErrorFix: >-
+    Attendez une heure : votre quota se rétablit tout seul.
+  rateLimitExceededGeneratePAT: Comment générer un jeton d'accès personnel
+  rateLimitExceededHasSet: Un jeton d'accès personnel est enregistré.
+  rateLimitExceededRemoveToken: Retirer le jeton
+  rateLimitExceededGitHubPAT: Jeton d'accès personnel GitHub
+  rateLimitExceededCopyPastePAT: Copiez-collez votre jeton
+  rateLimitExceededSaveToken: Enregistrer le jeton
+
+  # Pied de page
+  navGitHub: GitHub
+  footer: >-
+    Cette page est [en libre accès]($REPO), propulsée par
+    [Upptime](https://upptime.js.org)
