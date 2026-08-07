@@ -5,18 +5,18 @@
     "icon": "https://icons.duckduckgo.com/ip3/www.kyneria.com.ico",
     "slug": "site-kyneria",
     "status": "down",
-    "uptime": "99.40%",
-    "uptimeDay": "93.63%",
-    "uptimeWeek": "99.09%",
-    "uptimeMonth": "99.40%",
-    "uptimeYear": "99.40%",
+    "uptime": "93.11%",
+    "uptimeDay": "22.39%",
+    "uptimeWeek": "88.91%",
+    "uptimeMonth": "93.11%",
+    "uptimeYear": "93.11%",
     "time": 176,
     "timeDay": 0,
     "timeWeek": 177,
     "timeMonth": 176,
     "timeYear": 176,
     "dailyMinutesDown": {
-      "2026-08-07": 92
+      "2026-08-07": 1118
     }
   },
   {
@@ -24,19 +24,19 @@
     "url": "https://www.kyneria.com/sitemap.xml",
     "icon": "https://icons.duckduckgo.com/ip3/www.kyneria.com.ico",
     "slug": "plan-du-site-referencement",
-    "status": "down",
-    "uptime": "99.40%",
-    "uptimeDay": "93.65%",
-    "uptimeWeek": "99.09%",
-    "uptimeMonth": "99.40%",
-    "uptimeYear": "99.40%",
-    "time": 93,
-    "timeDay": 0,
-    "timeWeek": 88,
-    "timeMonth": 93,
-    "timeYear": 93,
+    "status": "up",
+    "uptime": "93.11%",
+    "uptimeDay": "22.41%",
+    "uptimeWeek": "88.92%",
+    "uptimeMonth": "93.11%",
+    "uptimeYear": "93.11%",
+    "time": 105,
+    "timeDay": 249,
+    "timeWeek": 111,
+    "timeMonth": 105,
+    "timeYear": 105,
     "dailyMinutesDown": {
-      "2026-08-07": 91
+      "2026-08-07": 1117
     }
   },
   {
@@ -44,19 +44,19 @@
     "url": "https://www.omniasynx.com/robots.txt",
     "icon": "https://icons.duckduckgo.com/ip3/www.omniasynx.com.ico",
     "slug": "redirection-omniasynx-com",
-    "status": "down",
-    "uptime": "99.40%",
-    "uptimeDay": "93.67%",
-    "uptimeWeek": "99.10%",
-    "uptimeMonth": "99.40%",
-    "uptimeYear": "99.40%",
-    "time": 283,
-    "timeDay": 0,
-    "timeWeek": 361,
-    "timeMonth": 283,
-    "timeYear": 283,
+    "status": "up",
+    "uptime": "93.11%",
+    "uptimeDay": "22.42%",
+    "uptimeWeek": "88.92%",
+    "uptimeMonth": "93.11%",
+    "uptimeYear": "93.11%",
+    "time": 294,
+    "timeDay": 435,
+    "timeWeek": 372,
+    "timeMonth": 294,
+    "timeYear": 294,
     "dailyMinutesDown": {
-      "2026-08-07": 91
+      "2026-08-07": 1117
     }
   },
   {
