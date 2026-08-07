@@ -4,17 +4,17 @@
     "url": "https://www.kyneria.com/robots.txt",
     "icon": "https://icons.duckduckgo.com/ip3/www.kyneria.com.ico",
     "slug": "site-kyneria",
-    "status": "down",
+    "status": "up",
     "uptime": "93.11%",
     "uptimeDay": "22.39%",
     "uptimeWeek": "88.91%",
     "uptimeMonth": "93.11%",
     "uptimeYear": "93.11%",
-    "time": 176,
-    "timeDay": 0,
-    "timeWeek": 177,
-    "timeMonth": 176,
-    "timeYear": 176,
+    "time": 190,
+    "timeDay": 367,
+    "timeWeek": 204,
+    "timeMonth": 190,
+    "timeYear": 190,
     "dailyMinutesDown": {
       "2026-08-07": 1118
     }
@@ -45,11 +45,11 @@
     "icon": "https://icons.duckduckgo.com/ip3/www.omniasynx.com.ico",
     "slug": "redirection-omniasynx-com",
     "status": "up",
-    "uptime": "93.11%",
+    "uptime": "93.12%",
     "uptimeDay": "22.42%",
     "uptimeWeek": "88.92%",
-    "uptimeMonth": "93.11%",
-    "uptimeYear": "93.11%",
+    "uptimeMonth": "93.12%",
+    "uptimeYear": "93.12%",
     "time": 294,
     "timeDay": 435,
     "timeWeek": 372,
@@ -57,6 +57,26 @@
     "timeYear": 294,
     "dailyMinutesDown": {
       "2026-08-07": 1117
+    }
+  },
+  {
+    "name": "Sonde de panne volontaire",
+    "url": "https://sonde.kyneria.invalid/",
+    "icon": "https://icons.duckduckgo.com/ip3/sonde.kyneria.invalid.ico",
+    "slug": "sonde-de-panne-volontaire",
+    "status": "down",
+    "uptime": "77.18%",
+    "uptimeDay": "77.18%",
+    "uptimeWeek": "77.18%",
+    "uptimeMonth": "77.18%",
+    "uptimeYear": "77.18%",
+    "time": 0,
+    "timeDay": 0,
+    "timeWeek": 0,
+    "timeMonth": 0,
+    "timeYear": 0,
+    "dailyMinutesDown": {
+      "2026-08-07": 0
     }
   },
   {
