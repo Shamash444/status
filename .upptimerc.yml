@@ -33,6 +33,14 @@ sites:
   # Supabase répond 401 sans clé d'API : c'est la BONNE réponse d'un
   # service en bonne santé. On attend donc 401, pas 200 — inutile
   # d'exposer une clé dans un dépôt public pour obtenir un 200.
+  # ⚠️ SONDE DE PANNE VOLONTAIRE — TEMPORAIRE, À RETIRER
+  # Ajoutée le 2026-08-07 pour prouver de bout en bout que l'alerte ntfy
+  # arrive vraiment. Le domaine « .invalid » est réservé par la norme
+  # (RFC 2606) : il ne résout JAMAIS. La sonde est donc en panne par
+  # construction, sans dépendre de la météo du réseau.
+  - name: Sonde de panne volontaire
+    url: https://sonde.kyneria.invalid/
+
   - name: Base de données
     url: https://ixnaqeysrbrimquvvfqf.supabase.co/rest/v1/
     expectedStatusCodes:

@@ -1,0 +1,113 @@
+# ══════════════════════════════════════════════════════════════
+# ALERTE TÉLÉPHONE — ntfy
+#
+# POURQUOI CE FICHIER EXISTE
+# Le 2026-08-06, kyneria.com est resté hors ligne 25 heures. La
+# surveillance a parfaitement fonctionné : elle a détecté la panne à
+# 00 h 30 UTC et ouvert trois tickets d'incident. Mais AUCUN canal de
+# notification n'était configuré : l'alerte n'avait nulle part où aller.
+# Tony l'a appris par un mail de Proton, un jour plus tard.
+#
+# 🔴 POURQUOI PAS UNE ALERTE PAR E-MAIL
+# Le site et la messagerie partagent le même domaine. Quand le domaine
+# tombe, la messagerie tombe avec lui : un e-mail annonçant que
+# kyneria.com est mort ne peut pas partir de kyneria.com. Une alerte ne
+# doit JAMAIS voyager par le chemin qu'elle surveille.
+#
+# POURQUOI LES TICKETS PLUTÔT QUE LE WEBHOOK D'UPPTIME
+# Upptime sait appeler un webhook générique
+# (NOTIFICATION_CUSTOM_WEBHOOK), mais il poste
+# {"data":{"message":"…"}} — ntfy publierait ce JSON brut, doublement
+# échappé, comme corps de la notification. Illisible sur un téléphone.
+# Les tickets d'incident, eux, sont déjà prouvés : ce sont EUX qui se
+# sont ouverts pendant la vraie panne.
+#
+# ⚠️ LE SUJET NTFY EST UN SECRET
+# ntfy n'a ni compte ni mot de passe : le nom du canal EST le secret.
+# Qui le connaît lit les alertes du fondateur et peut en fabriquer de
+# fausses. Ce dépôt est PUBLIC : le sujet ne doit donc JAMAIS apparaître
+# ici. Il vit dans les secrets du dépôt, sous le nom NTFY_TOPIC.
+#
+# 🔒 INJECTION : le titre d'un ticket est du texte que N'IMPORTE QUI peut
+# écrire en ouvrant une issue. Il n'est donc jamais interpolé dans le
+# script — il passe par `env:` et n'est lu que comme variable de shell
+# entre guillemets, où il ne peut pas devenir une commande.
+# ══════════════════════════════════════════════════════════════
+name: Alerte ntfy
+
+on:
+  issues:
+    types: [opened, closed]
+
+permissions:
+  contents: read
+  issues: read
+
+jobs:
+  prevenir:
+    runs-on: ubuntu-latest
+    # Upptime étiquette « status » les tickets qu'il ouvre lui-même. Sans
+    # ce filtre, la moindre question ouverte par un inconnu sur ce dépôt
+    # public ferait sonner le téléphone de Tony.
+    if: contains(join(github.event.issue.labels.*.name, ','), 'status')
+    steps:
+      - name: Envoyer la notification
+        env:
+          NTFY_TOPIC: ${{ secrets.NTFY_TOPIC }}
+          NTFY_SERVER: ${{ secrets.NTFY_SERVER }}
+          ACTION: ${{ github.event.action }}
+          TITRE_TICKET: ${{ github.event.issue.title }}
+          LIEN: ${{ github.event.issue.html_url }}
+        run: |
+          set -euo pipefail
+
+          # Sans sujet configuré, on sort en SIGNALANT — jamais en silence.
+          # Un canal d'alerte muet est pire que pas de canal : on le croit
+          # branché. C'est exactement la panne du 2026-08-06.
+          if [ -z "${NTFY_TOPIC:-}" ]; then
+            echo "::error::NTFY_TOPIC n'est pas configure - aucune alerte ne partira."
+            exit 1
+          fi
+
+          SERVEUR="${NTFY_SERVER:-https://ntfy.sh}"
+
+          if [ "$ACTION" = "opened" ]; then
+            TITRE="Kyneria - service en panne"
+            PRIORITE="urgent"
+            TAGS="rotating_light"
+            LIGNE="La surveillance vient de detecter une panne."
+          else
+            TITRE="Kyneria - service retabli"
+            PRIORITE="default"
+            TAGS="white_check_mark"
+            LIGNE="Le service repond de nouveau normalement."
+          fi
+
+          # Le titre du ticket n'est JAMAIS interprete : il est ecrit dans
+          # un fichier, puis envoye tel quel comme corps de la requete.
+          {
+            printf '%s\n\n' "$TITRE_TICKET"
+            printf '%s\n' "$LIGNE"
+            printf '%s\n' "$LIEN"
+          } > corps.txt
+
+          # --fail-with-body : sans lui, curl rend 0 meme sur un 4xx/5xx et
+          # l'etape passerait au vert alors que rien n'est parti.
+          # Le sujet ne transite que dans l'URL, jamais dans un journal :
+          # `set -x` est volontairement absent.
+          reponse=$(curl --silent --show-error --fail-with-body \
+            --max-time 20 --retry 3 --retry-delay 5 \
+            -H "Title: $TITRE" \
+            -H "Priority: $PRIORITE" \
+            -H "Tags: $TAGS" \
+            -H "Click: $LIEN" \
+            --data-binary @corps.txt \
+            "$SERVEUR/$NTFY_TOPIC")
+
+          # ntfy rend le message publie en JSON, avec un identifiant.
+          if echo "$reponse" | grep -q '"id"'; then
+            echo "Alerte publiee sur ntfy."
+          else
+            echo "::error::ntfy a repondu sans identifiant de message."
+            exit 1
+          fi
