@@ -36,8 +36,8 @@ sites:
   # ⚠️ SONDE DE PANNE VOLONTAIRE — TEMPORAIRE, RETIRÉE AU COMMIT SUIVANT
   # Le domaine « .invalid » est réservé par la RFC 2606 : il ne résout
   # JAMAIS. La panne est donc certaine, elle ne dépend pas du réseau.
-  - name: Sonde de panne volontaire
-    url: https://sonde.kyneria.invalid/
+  - name: Sonde de panne 2
+    url: https://sonde2.kyneria.invalid/
 
   - name: Base de données
     url: https://ixnaqeysrbrimquvvfqf.supabase.co/rest/v1/
