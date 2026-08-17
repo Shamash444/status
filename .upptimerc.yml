@@ -30,18 +30,34 @@ sites:
   - name: Redirection omniasynx.com
     url: https://www.omniasynx.com/robots.txt
 
-  # Supabase répond 401 sans clé d'API : c'est la BONNE réponse d'un
-  # service en bonne santé. On attend donc 401, pas 200 — inutile
-  # d'exposer une clé dans un dépôt public pour obtenir un 200.
+  # ⚠️ CES DEUX SONDES ONT MENTI PENDANT UNE PANNE RÉELLE (2026-08-17).
+  #
+  # Elles interrogeaient `/rest/v1/` et `/auth/v1/health` en attendant un 401.
+  # Ces deux adresses sont servies par le PORTIER de Supabase : elles
+  # répondent 401 en moins d'une seconde même quand la base est morte.
+  # Mesuré côte à côte ce jour-là :
+  #
+  #     la sonde voyait  : /rest/v1/           → 401 en  0,8 s → « up, 100 % »
+  #     le client vivait : /rest/v1/menu_items → 522 en 20,4 s → rien
+  #     le client vivait : /auth/v1/token      → 522 en 20,3 s → il ne peut
+  #                                                              pas se connecter
+  #
+  # La page a donc affiché « Base de données : 100 % de disponibilité »
+  # pendant que le produit était à l'arrêt. Un indicateur incapable de passer
+  # au rouge n'est pas un indicateur, c'est une décoration.
+  #
+  # Ces deux entrées visent désormais une fonction Edge qui LIT VRAIMENT une
+  # ligne en base (et interroge vraiment l'authentification), avec un plafond
+  # de 8 secondes : 200 si le service a répondu, 503 sinon.
+  # Source : AuraSync/supabase/functions/health-check/index.ts
+  #
+  # 🔑 La clé reste côté serveur — ce dépôt est public, rien n'y est exposé.
+  #    La fonction ne rend aucune donnée : ni ligne, ni compte, ni adresse.
   - name: Base de données
-    url: https://ixnaqeysrbrimquvvfqf.supabase.co/rest/v1/
-    expectedStatusCodes:
-      - 401
+    url: https://ixnaqeysrbrimquvvfqf.supabase.co/functions/v1/health-check
 
   - name: Authentification
-    url: https://ixnaqeysrbrimquvvfqf.supabase.co/auth/v1/health
-    expectedStatusCodes:
-      - 401
+    url: https://ixnaqeysrbrimquvvfqf.supabase.co/functions/v1/health-check?check=auth
 
 # ── La page publique ──────────────────────────────────────────
 status-website:
