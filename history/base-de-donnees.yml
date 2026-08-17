@@ -1,7 +1,7 @@
-url: https://ixnaqeysrbrimquvvfqf.supabase.co/rest/v1/
-status: up
-code: 401
-responseTime: 127
-lastUpdated: 2026-08-16T23:14:04.498Z
+url: https://ixnaqeysrbrimquvvfqf.supabase.co/functions/v1/health-check
+status: down
+code: 503
+responseTime: 8163
+lastUpdated: 2026-08-17T17:37:56.068Z
 startTime: 2026-07-27T12:45:04.625Z
 generator: Upptime <https://github.com/upptime/upptime>
