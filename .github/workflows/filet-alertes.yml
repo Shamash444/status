@@ -1,0 +1,118 @@
+# ══════════════════════════════════════════════════════════════
+# FILET DE RATTRAPAGE DES ALERTES
+#
+# 🔴 POURQUOI CE FICHIER EXISTE (mesuré le 2026-08-17)
+#
+# La base de données de Kyneria est tombée. La surveillance l'a
+# parfaitement détectée : à 17 h 37, « Base de données confirmed down
+# after 3 attempts (HTTP 503) ». Elle a voulu ouvrir le ticket
+# d'incident — celui qui fait sonner le téléphone — et l'API GitHub a
+# répondu, à cette seconde précise :
+#
+#   ERROR RequestError [HttpError]: No server is currently available
+#   to service your request.
+#     url: 'https://api.github.com/repos/Shamash444/status/issues'
+#
+# Le ticket n'est jamais né. Et comme Upptime n'agit que sur un
+# CHANGEMENT d'état, tous les passages suivants ont lu « déjà en panne »
+# et n'ont plus rien tenté. Une erreur passagère d'une seconde a donc
+# supprimé l'alerte POUR TOUJOURS : la panne a duré des heures, la page
+# affichait bien du rouge, et le téléphone est resté muet.
+#
+# 🔑 UN MÉCANISME QUI NE S'EXÉCUTE QU'UNE FOIS, AU MOMENT EXACT DE LA
+# BASCULE, N'A DROIT À AUCUN RATÉ. Ce filet retire cette exigence : au
+# lieu de réagir à un changement, il compare régulièrement l'état RÉEL
+# à ce qui a été annoncé, et rattrape ce qui manque. C'est la même règle
+# que dans le produit : on ne suppose pas qu'une écriture a eu lieu, on
+# vérifie qu'elle a eu lieu.
+#
+# ⚠️ LE TICKET EST CRÉÉ AVEC GH_PAT, JAMAIS AVEC LE JETON PAR DÉFAUT.
+# Un événement produit par GITHUB_TOKEN ne déclenche AUCUN workflow :
+# le ticket s'ouvrirait et l'alerte ntfy ne partirait pas. Piège déjà
+# payé sur ce dépôt le 2026-08-07.
+# ══════════════════════════════════════════════════════════════
+name: Filet de rattrapage des alertes
+
+on:
+  schedule:
+    # Un quart d'heure : assez serré pour qu'une alerte perdue soit
+    # rattrapée vite, assez lâche pour ne pas peser sur le quota.
+    - cron: '*/15 * * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: filet-alertes
+  cancel-in-progress: false
+
+jobs:
+  rattraper:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Comparer l'état réel aux alertes ouvertes
+        env:
+          # GH_PAT et non GITHUB_TOKEN : voir l'avertissement en tête.
+          GH_TOKEN: ${{ secrets.GH_PAT }}
+          DEPOT: ${{ github.repository }}
+        run: |
+          set -euo pipefail
+
+          if [ -z "${GH_TOKEN:-}" ]; then
+            echo "::error::GH_PAT absent - le filet ne peut rien ouvrir, et une alerte perdue le resterait."
+            exit 1
+          fi
+
+          # L'état réel, tel que la surveillance vient de l'écrire.
+          if [ ! -f history/summary.json ]; then
+            echo "::error::history/summary.json introuvable - rien a comparer."
+            exit 1
+          fi
+
+          # Un fichier par service en panne : nom + identifiant.
+          jq -r '.[] | select(.status != "up") | "\(.name)\t\(.slug)"' history/summary.json > /tmp/en-panne.tsv
+
+          if [ ! -s /tmp/en-panne.tsv ]; then
+            echo "Aucun service en panne : rien a rattraper."
+            exit 0
+          fi
+
+          RATTRAPES=0
+          while IFS=$'\t' read -r NOM SLUG; do
+            [ -n "$NOM" ] || continue
+            TITRE="🛑 $NOM is down"
+
+            # Un ticket ouvert existe-t-il deja pour ce service ? On compare le
+            # titre en SHELL (grep -Fx), jamais en interpolant dans une requete
+            # jq : le nom du service vient d'un fichier, on le traite en donnee.
+            DEJA=$(gh issue list --repo "$DEPOT" --state open --label "$SLUG" --limit 20 \
+                     --json title --jq '.[].title' 2>/dev/null | grep -Fxc "$TITRE" || true)
+
+            if [ "${DEJA:-0}" -gt 0 ]; then
+              echo "· $NOM : alerte deja ouverte, rien a faire."
+              continue
+            fi
+
+            echo "::warning::$NOM est en panne SANS alerte ouverte - le ticket avait ete perdu. Rattrapage."
+
+            # Le corps ne reprend AUCUN texte venu d'ailleurs : rien a injecter.
+            {
+              printf 'Ce service est marque en panne dans history/summary.json,\n'
+              printf 'mais aucune alerte n etait ouverte pour lui.\n\n'
+              printf 'Le ticket d origine a donc ete perdu — le plus souvent parce que\n'
+              printf 'l API GitHub a echoue a la seconde exacte de la bascule.\n'
+              printf 'Ce ticket est ouvert par le filet de rattrapage pour que\n'
+              printf 'l alerte parte quand meme.\n'
+            } > /tmp/corps.md
+
+            gh issue create --repo "$DEPOT" \
+              --title "$TITRE" \
+              --label status --label "$SLUG" \
+              --body-file /tmp/corps.md
+            RATTRAPES=$((RATTRAPES + 1))
+          done < /tmp/en-panne.tsv
+
+          echo "Alertes rattrapees : $RATTRAPES"
