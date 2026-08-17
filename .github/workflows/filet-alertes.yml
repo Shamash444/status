@@ -85,10 +85,12 @@ jobs:
             [ -n "$NOM" ] || continue
             TITRE="🛑 $NOM is down"
 
-            # Un ticket ouvert existe-t-il deja pour ce service ? On compare le
-            # titre en SHELL (grep -Fx), jamais en interpolant dans une requete
-            # jq : le nom du service vient d'un fichier, on le traite en donnee.
-            DEJA=$(gh issue list --repo "$DEPOT" --state open --label "$SLUG" --limit 20 \
+            # Un ticket ouvert existe-t-il deja pour ce service ? On filtre sur
+            # l'etiquette « status » — la seule dont l'existence est certaine —
+            # puis on compare le titre en SHELL (grep -Fx), jamais en
+            # interpolant dans une requete jq : le nom du service vient d'un
+            # fichier, on le traite comme une donnee.
+            DEJA=$(gh issue list --repo "$DEPOT" --state open --label status --limit 50 \
                      --json title --jq '.[].title' 2>/dev/null | grep -Fxc "$TITRE" || true)
 
             if [ "${DEJA:-0}" -gt 0 ]; then
@@ -107,6 +109,17 @@ jobs:
               printf 'Ce ticket est ouvert par le filet de rattrapage pour que\n'
               printf 'l alerte parte quand meme.\n'
             } > /tmp/corps.md
+
+            # 🔴 PREMIER ESSAI RATE ICI : « could not add label:
+            # 'base-de-donnees' not found ». Upptime cree l'etiquette par
+            # service AU MOMENT ou il ouvre son propre ticket — donc elle
+            # n'existe pas quand c'est le filet qui ouvre le premier. On la
+            # cree, sans bruit si elle est deja la. Les deux etiquettes
+            # comptent : « status » fait partir l'alerte ntfy, celle du
+            # service permet a Upptime de reconnaitre ce ticket et de le
+            # FERMER tout seul au retablissement.
+            gh label create "$SLUG" --repo "$DEPOT" --color ededed \
+              --description "Sonde $NOM" --force >/dev/null
 
             gh issue create --repo "$DEPOT" \
               --title "$TITRE" \
