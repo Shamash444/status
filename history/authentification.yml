@@ -1,7 +1,7 @@
 url: https://ixnaqeysrbrimquvvfqf.supabase.co/functions/v1/health-check?check=auth
 status: up
 code: 200
-responseTime: 538
-lastUpdated: 2026-09-03T00:54:08.575Z
+responseTime: 479
+lastUpdated: 2026-09-04T00:37:31.933Z
 startTime: 2026-07-27T12:45:05.121Z
 generator: Upptime <https://github.com/upptime/upptime>
