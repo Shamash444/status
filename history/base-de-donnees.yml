@@ -1,7 +1,7 @@
 url: https://ixnaqeysrbrimquvvfqf.supabase.co/functions/v1/health-check
-status: down
-code: 503
-responseTime: 8119
-lastUpdated: 2026-09-14T00:36:13.548Z
+status: up
+code: 200
+responseTime: 2660
+lastUpdated: 2026-09-14T18:27:16.257Z
 startTime: 2026-07-27T12:45:04.625Z
 generator: Upptime <https://github.com/upptime/upptime>
